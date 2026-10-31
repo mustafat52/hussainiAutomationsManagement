@@ -1,0 +1,49 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Testing
+/coverage
+
+# Next.js build output
+/.next/
+/out/
+
+# Production build
+/build
+
+# Local data — this is the important one for this project.
+# Contains your actual SQLite database (all clients, projects, financials)
+# and every uploaded file (quotations, architecture docs, AI closure reports).
+# This should NEVER be committed or pushed to a public repo.
+/data/
+
+# Environment variables — contains MASTER_KEY (encrypts your credentials vault)
+# and ANTHROPIC_API_KEY. Never commit real secrets.
+.env
+.env*.local
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Editor / OS
+.DS_Store
+*.pem
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Vercel (if you ever deploy there)
+.vercel
+
+# Turbopack
+.turbo
