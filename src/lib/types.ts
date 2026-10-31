@@ -71,3 +71,24 @@ export type CredentialMeta = {
   key_name: string;
   created_at: string;
 };
+
+export type VaultEntry = {
+  id: string;
+  category: string;
+  title: string;
+  username: string;
+  url: string;
+  has_notes: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type MaintenanceItem = {
+  project_id: string;
+  project_name: string;
+  client_name: string;
+  contact: string;
+  expected_amount: number;
+  amount: number;
+  received_at: string | null;
+};

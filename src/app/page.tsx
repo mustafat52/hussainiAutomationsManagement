@@ -2,13 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Plus, TrendingUp, Layers, RefreshCw, Clock3, Wallet, Receipt, Pencil, Check, LogOut } from "lucide-react";
+import { Search, Plus, TrendingUp, Layers, RefreshCw, Clock3, Wallet, Receipt, Pencil, Check } from "lucide-react";
 import type { Project, Client, Account } from "@/lib/types";
 import ProjectRow from "./components/ProjectRow";
 import AddProjectModal from "./components/AddProjectModal";
 import ExpensesModal from "./components/ExpensesModal";
+import AppNav from "./components/AppNav";
 import { useCountUp } from "@/lib/useCountUp";
-import { createClient } from "@/lib/supabase/client";
 
 function fmtMoney(n: number) {
   return "₹" + Math.round(n).toLocaleString("en-IN");
@@ -33,14 +33,14 @@ function StatCard({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="rounded-xl p-4"
+      className="rounded-xl p-3 md:p-4 min-w-0"
       style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
     >
       <div className="flex items-center gap-2 mb-2">
         <span style={{ color: accentColor }}>{icon}</span>
         <p className="text-xs mono uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>{label}</p>
       </div>
-      <p className="text-2xl font-medium mono" style={{ color: "var(--text-primary)" }}>
+      <p className="text-xl md:text-2xl font-medium mono" style={{ color: "var(--text-primary)" }}>
         {isMoney ? fmtMoney(animated) : Math.round(animated)}
       </p>
     </motion.div>
@@ -68,7 +68,7 @@ function BalanceCard({ value, onSave }: { value: number; onSave: (n: number) => 
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="rounded-xl p-4"
+      className="rounded-xl p-3 md:p-4 min-w-0"
       style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
     >
       <div className="flex items-center justify-between mb-2">
@@ -88,11 +88,11 @@ function BalanceCard({ value, onSave }: { value: number; onSave: (n: number) => 
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && commit()}
           onBlur={commit}
-          className="text-2xl font-medium mono w-full outline-none bg-transparent"
+          className="text-xl md:text-2xl font-medium mono w-full outline-none bg-transparent"
           style={{ color: "var(--text-primary)" }}
         />
       ) : (
-        <p className="text-2xl font-medium mono" style={{ color: "var(--text-primary)" }}>
+        <p className="text-xl md:text-2xl font-medium mono" style={{ color: "var(--text-primary)" }}>
           {"₹" + Math.round(animated).toLocaleString("en-IN")}
         </p>
       )}
@@ -138,11 +138,6 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }
-
-  async function signOut() {
-    await createClient().auth.signOut();
-    window.location.href = "/login";
   }
 
   async function saveBankBalance(n: number) {
@@ -196,7 +191,9 @@ export default function Home() {
   }, [projects, search]);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
+      <AppNav />
+
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6 sm:mb-8">
         <div>
           <h1 className="text-xl font-medium mono flex items-center">
@@ -215,15 +212,6 @@ export default function Home() {
             style={{ border: "1px solid var(--border)", color: "var(--text-secondary)" }}
           >
             <Receipt size={15} /> Expenses
-          </button>
-          <button
-            onClick={signOut}
-            className="text-sm flex items-center px-2.5 py-2 rounded-md"
-            style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
-            aria-label="Sign out"
-            title="Sign out"
-          >
-            <LogOut size={15} />
           </button>
           <button
             onClick={() => setShowAdd(true)}
@@ -269,14 +257,14 @@ export default function Home() {
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[520px] md:min-w-[900px]">
+            <table className="w-full md:min-w-[900px]">
               <thead>
                 <tr style={{ background: "var(--surface-2)", color: "var(--text-muted)" }}>
                   <th className="px-3 py-2.5 text-left text-xs font-normal mono uppercase tracking-wide w-8"></th>
-                  <th className="px-3 py-2.5 text-left text-xs font-normal mono uppercase tracking-wide">Client</th>
-                  <th className="px-3 py-2.5 text-left text-xs font-normal mono uppercase tracking-wide">Project</th>
-                  <th className="px-3 py-2.5 text-left text-xs font-normal mono uppercase tracking-wide">Status</th>
-                  <th className="px-3 py-2.5 text-left text-xs font-normal mono uppercase tracking-wide">Received</th>
+                  <th className="px-2 md:px-3 py-2.5 text-left text-xs font-normal mono uppercase tracking-wide">Client</th>
+                  <th className="px-3 py-2.5 text-left text-xs font-normal mono uppercase tracking-wide hidden md:table-cell">Project</th>
+                  <th className="px-1 md:px-3 py-2.5 text-left text-xs font-normal mono uppercase tracking-wide">Status</th>
+                  <th className="px-2 md:px-3 py-2.5 text-left text-xs font-normal mono uppercase tracking-wide">Received</th>
                   <th className="px-3 py-2.5 text-left text-xs font-normal mono uppercase tracking-wide hidden md:table-cell">Maintenance</th>
                   <th className="px-3 py-2.5 text-left text-xs font-normal mono uppercase tracking-wide hidden md:table-cell">Account</th>
                   <th className="px-3 py-2.5 text-left text-xs font-normal mono uppercase tracking-wide hidden md:table-cell">Last touched</th>

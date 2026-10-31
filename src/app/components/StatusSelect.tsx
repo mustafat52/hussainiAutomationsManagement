@@ -15,7 +15,7 @@ export default function StatusSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="appearance-none cursor-pointer pl-4 pr-2 py-0.5 rounded-full text-xs font-medium outline-none"
+        className="appearance-none cursor-pointer pl-4 pr-1.5 md:pr-2 py-0.5 rounded-full text-[11px] md:text-xs font-medium outline-none w-[5.6rem] md:w-auto overflow-hidden text-ellipsis whitespace-nowrap"
         style={{ background: s.bg, color: s.fg }}
       >
         {PROJECT_STATUSES.map((st) => (

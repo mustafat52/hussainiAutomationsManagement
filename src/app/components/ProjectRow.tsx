@@ -153,18 +153,26 @@ export default function ProjectRow({
         onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface-hover)")}
         onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
       >
-        <td className="px-3 py-3">
+        <td className="pl-3 pr-1 md:px-3 py-3">
           <motion.div animate={{ rotate: open ? 90 : 0 }} transition={{ duration: 0.15 }} style={{ color: "var(--text-muted)" }}>
             <ChevronRight size={15} />
           </motion.div>
         </td>
-        <td className="px-3 py-3 text-sm font-medium">{project.client_name}</td>
-        <td className="px-3 py-3 text-sm">{project.name}</td>
-        <td className="px-3 py-3"><StatusSelect value={project.status} onChange={changeStatus} /></td>
-        <td className="px-3 py-3 text-sm mono" style={{ color: "var(--gold)" }}>
+        <td className="px-2 md:px-3 py-3 text-sm font-medium">
+          {project.client_name}
+          {/* On a phone the project name sits under the client, so the table fits the screen. */}
+          <span className="block md:hidden text-xs font-normal mt-0.5" style={{ color: "var(--text-muted)" }}>{project.name}</span>
+        </td>
+        <td className="px-3 py-3 text-sm hidden md:table-cell">{project.name}</td>
+        <td className="px-1 md:px-3 py-3"><StatusSelect value={project.status} onChange={changeStatus} /></td>
+        <td className="px-2 md:px-3 py-3 text-sm mono" style={{ color: "var(--gold)" }}>
           {fmtMoney(project.amount_collected)}
           {project.amount_collected < (project.final_amount || project.quoted_amount) && (
-            <span style={{ color: "var(--text-muted)" }}> / {fmtMoney(project.final_amount || project.quoted_amount)}</span>
+            <span className="block md:inline text-xs md:text-sm" style={{ color: "var(--text-muted)" }}>
+              <span className="hidden md:inline"> / </span>
+              <span className="md:hidden">of </span>
+              {fmtMoney(project.final_amount || project.quoted_amount)}
+            </span>
           )}
         </td>
         <td className="px-3 py-3 text-sm hidden md:table-cell">
