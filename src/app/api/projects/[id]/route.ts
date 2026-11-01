@@ -8,6 +8,7 @@ const TEXT_FIELDS = [
   "maintenance_status", "maintenance_cycle", "maintenance_coverage",
 ];
 const DATE_FIELDS = ["start_date", "delivery_date", "maintenance_next_due"];
+const BOOL_FIELDS = ["maintenance_on"];
 const NUMBER_FIELDS = ["quoted_amount", "final_amount", "amount_collected", "maintenance_amount"];
 
 export async function PATCH(
@@ -21,6 +22,7 @@ export async function PATCH(
   for (const k of TEXT_FIELDS) if (k in body) update[k] = body[k] ?? "";
   for (const k of DATE_FIELDS) if (k in body) update[k] = nullIfEmpty(body[k]);
   for (const k of NUMBER_FIELDS) if (k in body) update[k] = num(body[k]);
+  for (const k of BOOL_FIELDS) if (k in body) update[k] = body[k] === true;
 
   if (Object.keys(update).length === 0) {
     return NextResponse.json({ error: "No valid fields" }, { status: 400 });

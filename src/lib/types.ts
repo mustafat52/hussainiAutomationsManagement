@@ -32,6 +32,7 @@ export type Project = {
 
   maintenance_status: "none" | "active" | "paused" | "ended";
   maintenance_amount: number;
+  maintenance_on: boolean; // the on/off switch: only "on" projects appear on the Maintenance screen
   maintenance_cycle: "monthly" | "quarterly" | "yearly";
   maintenance_next_due: string | null;
   maintenance_coverage: string;

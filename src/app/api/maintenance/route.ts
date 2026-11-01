@@ -13,7 +13,7 @@ type Joined = {
 };
 
 // GET /api/maintenance?month=2026-11
-// Every project with a maintenance amount, plus whether this month's payment has been received.
+// Every project whose maintenance switch is ON (and has an amount), plus whether this month's payment has been received.
 export async function GET(req: NextRequest) {
   const month = req.nextUrl.searchParams.get("month") || "";
   if (!MONTH_RE.test(month)) {
@@ -26,8 +26,8 @@ export async function GET(req: NextRequest) {
     supabase
       .from("projects")
       .select("id, name, maintenance_amount, created_at, clients(id, name, contact)")
-      .gt("maintenance_amount", 0)
-      .not("maintenance_status", "in", "(paused,ended)"),
+      .eq("maintenance_on", true)
+      .gt("maintenance_amount", 0),
     supabase
       .from("maintenance_payments")
       .select("id, project_id, amount, received_at, projects(id, name, maintenance_amount, created_at, clients(id, name, contact))")
@@ -56,7 +56,8 @@ export async function GET(req: NextRequest) {
     };
   });
 
-  // Already-received payments for projects that no longer qualify (e.g. amount later set to 0) still show up as received.
+  // A payment already ticked off for this month stays visible (as received) even if the project was switched off afterwards,
+  // so past months and totals never silently change.
   for (const pay of payRes.data || []) {
     if (seen.has(pay.project_id)) continue;
     const p = pay.projects as unknown as Joined | null;

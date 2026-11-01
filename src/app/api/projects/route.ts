@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
       backend_notes: body.backend_notes || "",
       maintenance_status: body.maintenance_status || "none",
       maintenance_amount: num(body.maintenance_amount),
+      maintenance_on: body.maintenance_on === true,
       maintenance_cycle: body.maintenance_cycle || "monthly",
       maintenance_next_due: nullIfEmpty(body.maintenance_next_due),
       maintenance_coverage: body.maintenance_coverage || "",

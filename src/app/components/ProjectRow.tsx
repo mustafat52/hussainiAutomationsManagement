@@ -31,6 +31,26 @@ function cycleAbbrev(cycle: string) {
   return "/mo";
 }
 
+function MaintenanceSwitch({ on, onChange }: { on: boolean; onChange: (next: boolean) => void }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      aria-label="Include in Maintenance screen"
+      title={on ? "On: shown on the Maintenance screen" : "Off: hidden from the Maintenance screen"}
+      onClick={(e) => { e.stopPropagation(); onChange(!on); }}
+      className="relative inline-flex items-center shrink-0 rounded-full transition-colors"
+      style={{ width: 34, height: 20, background: on ? "var(--success)" : "var(--surface-2)", border: "1px solid var(--border)" }}
+    >
+      <span
+        className="absolute rounded-full transition-all"
+        style={{ width: 14, height: 14, top: 2, left: on ? 16 : 2, background: on ? "#0a0b0f" : "var(--text-muted)" }}
+      />
+    </button>
+  );
+}
+
 export default function ProjectRow({
   project,
   index = 0,
@@ -90,6 +110,23 @@ export default function ProjectRow({
     });
     if (!res.ok) {
       alert("Could not update status.");
+      return;
+    }
+    onUpdate();
+  }
+
+  async function toggleMaintenance(next: boolean) {
+    if (next && !(project.maintenance_amount > 0)) {
+      alert("Set a maintenance amount first: open this project, tap Edit, fill in \"Maintenance / month\", then switch it on.");
+      return;
+    }
+    const res = await fetch(`/api/projects/${project.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ maintenance_on: next }),
+    });
+    if (!res.ok) {
+      alert("Could not change maintenance. Have you run the add-maintenance-toggle.sql step?");
       return;
     }
     onUpdate();
@@ -176,20 +213,19 @@ export default function ProjectRow({
           )}
         </td>
         <td className="px-3 py-3 text-sm hidden md:table-cell">
-          {project.maintenance_amount > 0 ? (
-            <div>
-              <span className="mono" style={{ color: "var(--success)" }}>
+          <div className="flex items-center gap-2.5">
+            <MaintenanceSwitch on={project.maintenance_on} onChange={toggleMaintenance} />
+            {project.maintenance_amount > 0 ? (
+              <span
+                className="mono"
+                style={{ color: project.maintenance_on ? "var(--success)" : "var(--text-muted)", opacity: project.maintenance_on ? 1 : 0.7 }}
+              >
                 {fmtMoney(project.maintenance_amount)}{cycleAbbrev(project.maintenance_cycle)}
               </span>
-              {project.maintenance_next_due && (
-                <p className="text-xs mono mt-0.5" style={{ color: "var(--text-muted)" }}>
-                  due {project.maintenance_next_due}
-                </p>
-              )}
-            </div>
-          ) : (
-            <span style={{ color: "var(--text-muted)" }}>—</span>
-          )}
+            ) : (
+              <span style={{ color: "var(--text-muted)" }}>—</span>
+            )}
+          </div>
         </td>
         <td className="px-3 py-3 hidden md:table-cell">
           <AccountBadge
@@ -226,6 +262,15 @@ export default function ProjectRow({
                     {field("Final amount", "final_amount", "number")}
                     {field("Amount collected", "amount_collected", "number")}
                     {field("Maintenance / month", "maintenance_amount", "number")}
+                    <div>
+                      <p className="text-xs mb-1 mono uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Maintenance billing</p>
+                      <div className="flex items-center gap-2.5 h-[30px]">
+                        <MaintenanceSwitch on={project.maintenance_on} onChange={toggleMaintenance} />
+                        <span className="text-sm" style={{ color: project.maintenance_on ? "var(--success)" : "var(--text-muted)" }}>
+                          {project.maintenance_on ? "On: shown on Maintenance screen" : "Off: hidden"}
+                        </span>
+                      </div>
+                    </div>
                     {field("Backend notes", "backend_notes", "textarea", true)}
                   </div>
 
