@@ -169,7 +169,7 @@ export default function Home() {
     const lifetimeEarnings = projects.reduce((sum, p) => sum + (p.amount_collected || 0), 0);
     const activeProjects = projects.filter((p) => p.status === "in_work" || p.status === "in_test").length;
     const mrr = projects
-      .filter((p) => p.status === "completed" && p.maintenance_on && (p.maintenance_amount || 0) > 0)
+      .filter((p) => p.maintenance_on && (p.maintenance_amount || 0) > 0)
       .reduce((sum, p) => sum + (p.maintenance_amount || 0), 0);
     const pending = projects.reduce(
       (sum, p) => sum + Math.max((p.final_amount || p.quoted_amount || 0) - (p.amount_collected || 0), 0),
